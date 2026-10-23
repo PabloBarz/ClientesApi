@@ -66,6 +66,74 @@ GO
 ```sql
 SELECT * FROM productos;
 GO
+```
 
-SELECT * FROM clientes;
+
+# API REST - C# (.NET 10) -> MS SQL SERVER
+
+## Clientes
+* GET
+* POST
+* PUT
+* DELETE (Protegido - Solo Admin)
+
+## Proteger API REST -> Usuario
+JWT (Json Web Token)
+* Crear usuario (contraseña encriptada con BCrypt)
+* Iniciar sesión (login) -> TOKEN (autorización)
+* Consumir API REST
+
+---
+
+## *** Test ***
+
+### 1. GET - Listar Clientes (Sin Autorización)
+* **URL:** `https://localhost:7292/api/clientes`
+* **Método:** GET
+* **Resultado:** 401 Unauthorized / Sin autorización
+
+### 2. POST - Registro de Usuario
+* **URL:** `https://localhost:7292/api/auth/registrar`
+* **Método:** POST
+* **Body (JSON):**
+```json
+{
+  "username": "´Pablo",
+  "password": "clave1234"
+}
+```
+* **Resultado:** 
+```json
+{ "mensaje": "Usuario registrado correctamente" }
+```
+
+### 3. POST - Iniciar Sesión (Login)
+* **URL:** `https://localhost:7292/api/auth/login`
+* **Método:** POST
+* **Body (JSON):**
+```json
+{
+  "username": "Pablo",
+  "password": "clave1234"
+}
+```
+* **Resultado:** Recibe el JWT Token junto a su fecha de expiración.
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expira": "2026-10-23T15:41:05.9780016Z"
+}
+```
+
+### 4. Asignación de Rol en Base de Datos (Admin)
+Para ejecutar acciones administrativas como la eliminación, se actualiza el rol del usuario directamente en la base de datos de `Usuario` a `Admin`:
+```sql
+UPDATE Usuario SET rol = 'Admin' WHERE id = 2
 GO
+```
+
+### 5. DELETE - Eliminar Cliente por ID (Con Autorización Admin)
+* **URL:** `https://localhost:7292/api/clientes/1`
+* **Método:** DELETE
+* **Headers:** `Authorization: Bearer <TOKEN_DE_LOGIN>`
+* **Resultado:** 204 No Content (Cliente eliminado con éxito)
