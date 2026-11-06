@@ -33,7 +33,10 @@ namespace ClientesApi.Controllers
                 var texto = buscar.Trim();
 
                 consulta = consulta.Where(p =>
-                    p.RazonSocial.Contains(texto) ||
+                    EF.Functions.Collate(
+                        p.RazonSocial,
+                        "Modern_Spanish_100_CI_AI"
+                    ).Contains(texto) ||
                     p.Ruc.Contains(texto));
             }
 
