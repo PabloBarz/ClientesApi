@@ -61,10 +61,38 @@ INSERT INTO productos
 GO
 ```
 
-## 4. Consultas de Prueba
+## 4. Tabla de Productos
+
+La tabla `proveedores` almacena la información de los proveedores, incluyendo razón social, RUC, teléfono, correo y dirección, validando que el RUC tenga exactamente 11 dígitos numéricos y sea único.
+```sql
+CREATE TABLE proveedores
+(
+    id           INT IDENTITY(1,1) PRIMARY KEY,
+    razon_social NVARCHAR(120) NOT NULL,
+    ruc          CHAR(11) NOT NULL,
+    telefono     NVARCHAR(9) NOT NULL,
+    correo       NVARCHAR(150) NOT NULL,
+    direccion    NVARCHAR(150) NOT NULL,
+    CONSTRAINT uk_ruc_pro UNIQUE (ruc),
+    CONSTRAINT ck_ruc_pro CHECK (
+        ruc NOT LIKE '%[^0-9]%'
+        AND LEN(ruc) = 11
+    )
+)
+GO
+
+INSERT INTO proveedores
+    (razon_social, ruc, telefono, correo, direccion) VALUES
+    ('Tecnología Perú SAC', '20123456789', '956333444', 'ventas@tecnologiaperu.com', 'Lima'),
+    ('Distribuidora del Sur SAC', '20456789123', '956444555', 'contacto@distribuidorasur.com', 'Chincha Alta'),
+    ('Importaciones Digitales EIRL', '20678912345', '956555666', 'ventas@importacionesdigitales.com', 'Ica')
+GO
+```
+
+## 5. Consultas de Prueba
 
 ```sql
-SELECT * FROM productos;
+SELECT * FROM proveedores;
 GO
 ```
 
